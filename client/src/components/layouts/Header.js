@@ -8,20 +8,18 @@ import { TbCategoryPlus } from 'react-icons/tb';
 import { BsCart4 } from 'react-icons/bs';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { BsChevronDown } from 'react-icons/bs'; // Dropdown icon
+
 import toast from 'react-hot-toast';
 
+import Sidebar from './Sidebar';
+
 const Header = () => {
-    const [toggle, setToggle] = useState(false);
     const [auth, setAuth] = useAuth();
-    // console.log(auth)
+    const [toggle, setToggle] = useState(false);
     const navigate = useNavigate()
 
-    const showSideMenu = () => {
-        setToggle(true);
-    };
-
-    const hideSideMenu = () => {
-        setToggle(false);
+    const toggleSidebar = () => {
+        setToggle(!toggle);
     };
 
     const handleLogout = () => {
@@ -78,6 +76,7 @@ const Header = () => {
             </div>
         );
     };
+
     const [isOpen, setIsOpen] = useState(false);
     const links = [
         {
@@ -118,29 +117,19 @@ const Header = () => {
     return (
         <>
             <div className="sticky top-0 z-50 bg-white shadow-md">
-                <div
-                    className="black-overlay w-full h-full fixed duration-500"
-                    onClick={hideSideMenu}
+                <div className="black-overlay w-full h-full fixed duration-500" onClick={toggleSidebar}
                     style={{
                         opacity: toggle ? 1 : 0,
                         visibility: toggle ? 'visible' : 'hidden',
                     }}
                 >
-                    <div
-                        onClick={(e) => {
-                            e.stopPropagation();
-                        }}
-                        className="md:w-[500px] w-3/4 bg-white h-full absolute duration-[400ms]"
-                        style={{
-                            left: toggle ? '0%' : '-100%',
-                        }}
-                    ></div>
+                    <Sidebar toggle={toggle} toggleSidebar={toggleSidebar} handleLogout={handleLogout} />
                 </div>
 
                 <header className="p-2 md:p-6 shadow-xl">
                     <div className="max-w-screen-xl mx-auto flex items-center justify-between">
                         <div className="w-20 flex items-center md:gap-4">
-                            <GiHamburgerMenu className="h-10 w-10" onClick={showSideMenu} />
+                            <GiHamburgerMenu className="h-10 w-10" onClick={toggleSidebar} />
                             <Link to="/" className="w-full p-2">
                                 <img src="/images/logo.jpg" className="w-24" alt="Logo" />
                             </Link>
@@ -148,7 +137,7 @@ const Header = () => {
 
                         <div className="hidden md:block p-2">
                             <span className="font-bold border-b-[3px] border-black">Mohangarden</span> Uttamnangr, Delhi
-                            <PiCaretDownLight onClick={showSideMenu} className="inline" />
+                            <PiCaretDownLight onClick={toggleSidebar} className="inline" />
                         </div>
 
                         <nav className="flex items-center space-x-4 md:gap-4">
