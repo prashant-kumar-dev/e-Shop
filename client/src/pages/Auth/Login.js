@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Layout from '../../components/layouts/Layout';
 import { useAuth } from '../../context/auth';
 
@@ -15,6 +15,7 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
     const [auth, setAuth] = useAuth()
     const navigate = useNavigate();
+    const location = useLocation()
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -40,7 +41,7 @@ const Login = () => {
     };
     useEffect(() => {
         if (auth.token) {
-            navigate('/');
+            navigate(location.state || '/');
         }
     }, [auth.token, navigate]);
 

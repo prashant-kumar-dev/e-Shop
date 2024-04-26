@@ -91,7 +91,8 @@ class AuthController {
                     name: user.name,
                     email: user.email,
                     phone: user.phone,
-                    address: user.address
+                    address: user.address,
+                    role: user.role,
                 },
                 token
             });
@@ -128,7 +129,7 @@ class AuthController {
             }
             //check
             const user = await userModel.findOne({ email, answer: securityQuestion })
-            console.log("huiiop[poiuhiopokj");
+
             //validation
             if (!user) {
                 res.status(404).send({
@@ -158,6 +159,10 @@ class AuthController {
         res.send('protected routes')
     }
     async dashboardUser(req, res) {
+        // res.send('protected routes')
+        res.status(200).send({ ok: true });
+    }
+    async dashboardAdmin(req, res) {
         // res.send('protected routes')
         res.status(200).send({ ok: true });
     }

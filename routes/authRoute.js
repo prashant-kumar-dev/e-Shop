@@ -27,8 +27,12 @@ router.post('/forgot-password', async (req, res) => {
     await authController.forgotPasswordUser(req, res);
 })
 
-//protected route
+//protected user route
 router.get('/user-auth', authMiddleware.requireSignin, async (req, res) => {
     await authController.dashboardUser(req, res);
+});
+//protected admin route
+router.get('/admin-auth', authMiddleware.requireSignin, authMiddleware.isAdmin, async (req, res) => {
+    await authController.dashboardAdmin(req, res);
 });
 export default router;
