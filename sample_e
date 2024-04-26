@@ -1,4 +1,0 @@
-PORT=
-DEV_MODE= 
-MONGO_URL = 
-JWT_SECRET = 

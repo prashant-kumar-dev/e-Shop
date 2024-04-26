@@ -7,11 +7,13 @@ import { MdAssignmentInd } from 'react-icons/md';
 import { TbCategoryPlus } from 'react-icons/tb';
 import { BsCart4 } from 'react-icons/bs';
 import { GiHamburgerMenu } from 'react-icons/gi';
+import { BsChevronDown } from 'react-icons/bs'; // Dropdown icon
 import toast from 'react-hot-toast';
 
 const Header = () => {
     const [toggle, setToggle] = useState(false);
     const [auth, setAuth] = useAuth();
+    // console.log(auth)
     const navigate = useNavigate()
 
     const showSideMenu = () => {
@@ -36,6 +38,47 @@ const Header = () => {
         })
     };
 
+    const Dropdown = ({ isOpen, toggleDropdown }) => {
+        return (
+            <div className="relative">
+                <button
+                    onClick={toggleDropdown}
+                    className="flex items-center gap-1 hover:text-blue-400 cursor-pointer"
+                    type="button"
+                >
+                    <MdAssignmentInd className="h-7 w-7" />
+                    <span className="text-sm">Profile</span>
+                    <BsChevronDown className="w-4 h-4" />
+                </button>
+
+                {/* Dropdown menu */}
+                {isOpen && (
+                    <div className="absolute mt-1 py-2 w-36 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700">
+                        <span className='p-3'>{`Hi ${auth.user.name}`}</span>
+                        {/* Dropdown menu */}
+                        <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+                            <li>
+                                <Link to={`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                    Account
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/settings" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                    Settings
+                                </Link>
+                            </li>
+                            <li>
+                                <button onClick={handleLogout} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                    Logout
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                )}
+            </div>
+        );
+    };
+    const [isOpen, setIsOpen] = useState(false);
     const links = [
         {
             icons: <IoMdSearch />,
@@ -47,12 +90,17 @@ const Header = () => {
             name: 'Category',
             path: '',
         },
-        {
-            icons: <MdAssignmentInd />,
-            name: auth.user ? 'Logout' : 'Login',
-            path: '/login',
-            onClick: auth.user ? handleLogout : null, // Add onClick handler for Logout button
-        },
+        auth.user
+            ? {
+                icons: <Dropdown isOpen={isOpen} toggleDropdown={() => setIsOpen(!isOpen)} />, // Using Dropdown component here
+                name: '',
+                path: '',
+            }
+            : {
+                icons: <MdAssignmentInd />,
+                name: 'Login',
+                path: '/login',
+            },
         {
             icons: (
                 <div className="relative">
