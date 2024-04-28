@@ -25,5 +25,5 @@ export default function AdminRoute() {
     // The Outlet component is used for nested routing in React Router
     // When this PrivateRoute component is rendered, the Outlet component renders the child routes defined in the parent route component (look in app.js routes)
 
-    return ok ? <Outlet /> : <Spinner />
+    return ok ? <Outlet /> : <Spinner path="" />
 }

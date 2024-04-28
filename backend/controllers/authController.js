@@ -15,7 +15,7 @@ class AuthController {
 
             // Check required fields
             if (!name || !email || !password || !phone || !address || !answer) {
-                return res.status(400).send({ message: 'All fields are required' });
+                return res.status(400).send({ success: false, message: 'All fields are required' });
             }
 
             // Check if user already exists

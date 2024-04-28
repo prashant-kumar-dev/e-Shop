@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const Spinner = () => {
+const Spinner = ({ path = "login" }) => {
     const [count, setCount] = useState(5);
     const navigate = useNavigate();
     const location = useLocation();
@@ -13,15 +13,15 @@ const Spinner = () => {
 
         // Redirect when count reaches 0
         if (count === 0) {
-            navigate('/login', {
-                state: location.pathname,
+            clearInterval(interval); // Clear interval first
+            navigate(`/${path}`, {
+                state: { from: location.pathname }, // Pass current location as state
             });
-            clearInterval(interval); // Clear interval after redirecting
         }
 
         // Clean up interval on component unmount
         return () => clearInterval(interval);
-    }, [count, navigate]);
+    }, [count, navigate, path, location.pathname]);
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/auth';
 import { PiCaretDownLight } from 'react-icons/pi';
@@ -18,12 +18,11 @@ const Header = () => {
     const [toggle, setToggle] = useState(false);
     const navigate = useNavigate()
 
-    const toggleSidebar = () => {
+    const toggleSidebar = useCallback(() => {
         setToggle(!toggle);
-    };
+    }, [toggle]);
 
-    const handleLogout = () => {
-        // Call your logout method from the auth context
+    const handleLogout = useCallback(() => {
         setAuth({
             ...auth,
             user: null,
@@ -33,8 +32,8 @@ const Header = () => {
         setTimeout(() => {
             toast.success('Logout successfully..!!');
             navigate('/login');
-        })
-    };
+        }, 1000);
+    }, [auth, navigate, setAuth]);
 
     const Dropdown = ({ isOpen, toggleDropdown }) => {
         return (
