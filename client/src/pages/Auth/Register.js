@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import Layout from '../../components/layouts/Layout';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -92,7 +92,7 @@ const Register = () => {
                                         placeholder={field.placeholder}
                                         required
                                     />
-                                    {field.name == 'password' && (
+                                    {field.name === 'password' && (
                                         <span className="cursor-pointer" onClick={togglePasswordVisibility}>
                                             {showPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
                                         </span>
