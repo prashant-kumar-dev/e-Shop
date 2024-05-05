@@ -1,0 +1,148 @@
+import React, { useState, useEffect } from 'react';
+import { Modal, Button, Pagination } from 'antd'; // Import Pagination component from antd
+import { FaEdit, FaTrash } from 'react-icons/fa';
+import Sidebar from '../../components/layouts/AdminMenu';
+import Layout from '../../components/layouts/Layout';
+import CategoryForm from '../../components/forms/CategoryForm';
+import toast from 'react-hot-toast';
+import axios from 'axios';
+
+const CategoryPage = () => {
+    const [categories, setCategories] = useState([]);
+    const [modalType, setModalType] = useState(null);
+    const [formData, setFormData] = useState({ name: '', id: null });
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 8; // Items per page
+
+    useEffect(() => {
+        fetchCategories();
+    }, [currentPage]);
+
+    const toggleModal = (type, data = { name: '', id: null }) => {
+        setModalType(type);
+        setFormData({ ...formData, ...data });
+    };
+
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+        const { name, id } = formData;
+        const apiUrl = id
+            ? `${process.env.REACT_APP_API_URL}/api/v1/category/update-category/${id}`
+            : `${process.env.REACT_APP_API_URL}/api/v1/category/create-category`;
+
+        try {
+            const { data } = await axios[id ? 'put' : 'post'](apiUrl, { name });
+            if (data.success) {
+                toast.success(`${name} ${id ? 'updated' : 'created'}`);
+                toggleModal(null);
+                fetchCategories();
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(`Something went wrong ${id ? 'updating' : 'creating'} category`);
+        }
+    };
+
+    const handleDelete = async (categoryId) => {
+        try {
+            const { data } = await axios.delete(`${process.env.REACT_APP_API_URL}/api/v1/category/delete-category/${categoryId}`);
+            if (data.success) {
+                toast.success(data.message);
+                fetchCategories();
+            } else {
+                toast.error(data.error);
+            }
+        } catch (error) {
+            toast.error('Something went wrong in deleting');
+        }
+    };
+
+    const fetchCategories = async () => {
+        const offset = (currentPage - 1) * itemsPerPage;
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/category/get-category?limit=${itemsPerPage}&offset=${offset}`);
+            const { data } = response;
+            if (data.success) {
+                setCategories(data.category);
+            } else {
+                throw new Error(data.message || 'Failed to fetch categories');
+            }
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+            toast.error('Something went wrong in getting categories');
+        }
+    };
+
+    const totalPages = Math.ceil(categories.length / itemsPerPage);
+
+    return (
+        <Layout>
+            <div className="flex">
+                <Sidebar />
+                <div className="flex-1 w-full px-8 py-4">
+                    <div className="flex justify-end mb-4">
+                        <Button type="primary" onClick={() => toggleModal('create')}>
+                            Add Category
+                        </Button>
+                    </div>
+                    <Modal
+                        open={!!modalType}
+                        onCancel={() => toggleModal(null)}
+                        footer={null}
+                    >
+                        <CategoryForm
+                            handleSubmit={handleFormSubmit}
+                            value={formData.name}
+                            setValue={(value) => setFormData({ ...formData, name: value })}
+                            submitName={modalType === 'create' ? 'Create Category' : 'Update Category'}
+                        />
+                    </Modal>
+                    <h1 className="text-2xl font-bold mb-1">All Categories</h1>
+                    <div className="bg-white shadow-md rounded-md p-4">
+                        <table className="w-full border-collapse border border-gray-300">
+                            <thead className="bg-gray-200">
+                                <tr>
+                                    <th className="border border-gray-300 px-4 py-2">Category Name</th>
+                                    <th className="border border-gray-300 px-4 py-2">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {categories.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((category) => (
+                                    <tr key={category._id} className="border border-gray-300">
+                                        <td className="border border-gray-300 px-4 py-2">{category.name}</td>
+                                        <td className="border border-gray-300 px-4 py-2  flex gap-2">
+                                            <button
+                                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                                onClick={() => toggleModal('update', { name: category.name, id: category._id })}
+                                            >
+                                                <FaEdit />
+                                            </button>
+                                            <button
+                                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                                onClick={() => handleDelete(category._id)}
+                                            >
+                                                <FaTrash />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="flex justify-center mt-4">
+                        <Pagination
+                            current={currentPage}
+                            onChange={(page) => setCurrentPage(page)}
+                            total={categories.length}
+                            pageSize={itemsPerPage}
+                            showSizeChanger={false}
+                        />
+                    </div>
+                </div>
+            </div>
+        </Layout>
+    );
+};
+
+export default CategoryPage;

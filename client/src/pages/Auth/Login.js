@@ -43,7 +43,7 @@ const Login = () => {
         if (auth.token) {
             navigate(location.state || '/');
         }
-    }, [auth.token, navigate]);
+    }, [auth.token, navigate, location.state]);
 
     const togglePasswordVisibility = () => {
         setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -81,7 +81,7 @@ const Login = () => {
                                     onChange={handleChange}
                                     placeholder={field.placeholder}
                                 />
-                                {field.name == 'password' && (
+                                {field.name === 'password' && (
                                     <span className="cursor-pointer" onClick={togglePasswordVisibility}>
                                         {showPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
                                     </span>
