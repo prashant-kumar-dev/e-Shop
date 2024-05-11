@@ -13,6 +13,7 @@ const CategoryPage = () => {
     const [formData, setFormData] = useState({ name: '', id: null });
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 8; // Items per page
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
         fetchCategories();
@@ -62,9 +63,11 @@ const CategoryPage = () => {
         const offset = (currentPage - 1) * itemsPerPage;
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/category/get-category?limit=${itemsPerPage}&offset=${offset}`);
+            // console.log(response.datay);
             const { data } = response;
             if (data.success) {
-                setCategories(data.category);
+                setCategories(data.categories);
+                setTotalPages(Math.ceil(data.totalCount / itemsPerPage));
             } else {
                 throw new Error(data.message || 'Failed to fetch categories');
             }
@@ -73,8 +76,6 @@ const CategoryPage = () => {
             toast.error('Something went wrong in getting categories');
         }
     };
-
-    const totalPages = Math.ceil(categories.length / itemsPerPage);
 
     return (
         <Layout>
@@ -108,7 +109,7 @@ const CategoryPage = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {categories.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((category) => (
+                                {categories.map((category) => (
                                     <tr key={category._id} className="border border-gray-300">
                                         <td className="border border-gray-300 px-4 py-2">{category.name}</td>
                                         <td className="border border-gray-300 px-4 py-2  flex gap-2">
@@ -134,7 +135,7 @@ const CategoryPage = () => {
                         <Pagination
                             current={currentPage}
                             onChange={(page) => setCurrentPage(page)}
-                            total={categories.length}
+                            total={totalPages * itemsPerPage}
                             pageSize={itemsPerPage}
                             showSizeChanger={false}
                         />

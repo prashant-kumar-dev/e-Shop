@@ -3,7 +3,7 @@ import React from 'react'
 const CategoryForm = ({ handleSubmit, value, setValue, submitName }) => {
     return (
         <div className="max-w-md mx-auto mt-1">
-            <h1 className="text-2xl font-bold mb-2">Create Category</h1>
+            <h1 className="text-2xl font-bold mb-2">{submitName}</h1>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                     <input
@@ -13,6 +13,7 @@ const CategoryForm = ({ handleSubmit, value, setValue, submitName }) => {
                         onChange={(e) => setValue(e.target.value)}
                         className="w-full px-3 py-2 rounded-md border"
                         placeholder="Enter category name"
+                        required
                     />
                 </div>
                 <div>

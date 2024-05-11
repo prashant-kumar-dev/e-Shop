@@ -63,20 +63,26 @@ export const updateCategoryController = async (req, res) => {
 
 // getting all category
 export const getcategoryController = async (req, res) => {
+    const { limit = 10, offset = 0 } = req.query; // Default limit to 10, offset to 0
     try {
-        const category = await categoryModel.find({})
+        const totalCount = await categoryModel.countDocuments(); // Get total count of categories
+        const categories = await categoryModel.find({})
+            .limit(Number(limit))
+            .skip(Number(offset));
+
         res.status(200).send({
             success: true,
-            message: 'All category List',
-            category
-        })
+            message: 'Category list fetched successfully',
+            categories,
+            totalCount,
+        });
     } catch (error) {
-        console.log(error)
+        console.log(error);
         res.status(500).send({
             success: false,
             error,
-            message: "Error while getting all category"
-        })
+            message: 'Error while fetching categories',
+        });
     }
 };
 
