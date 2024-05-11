@@ -44,16 +44,19 @@ export const createProductController = async (req, res) => {
 };
 //get products
 export const getProductController = async (req, res) => {
+    const { limit = 10, offset = 0 } = req.query; // Default limit to 10, offset to 0
     try {
+        const totalCount = await productModel.countDocuments();
         const products = await productModel
             .find({})
             .populate('category')
-            .limit(12)
+            .limit(Number(limit))
+            .skip(Number(offset))
             .sort({ createdAt: -1 });
 
         res.status(200).send({
             success: true,
-            totalCount: products.length,
+            totalCount,
             message: "Products fetched successfully",
             products,
         });

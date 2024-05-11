@@ -16,7 +16,7 @@ const CategoryPage = () => {
     const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
-        fetchCategories();
+        fetchCategories(currentPage);
     }, [currentPage]);
 
     const toggleModal = (type, data = { name: '', id: null }) => {
@@ -59,7 +59,7 @@ const CategoryPage = () => {
         }
     };
 
-    const fetchCategories = async () => {
+    const fetchCategories = async (currentPage) => {
         const offset = (currentPage - 1) * itemsPerPage;
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/category/get-category?limit=${itemsPerPage}&offset=${offset}`);

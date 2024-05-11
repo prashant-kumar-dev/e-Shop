@@ -5,8 +5,8 @@ import axios from "axios";
 import Spinner from "../Spinner";
 
 export default function AdminRoute() {
-    const [ok, setOk] = useState(true)
-    const [auth, setAuth] = useAuth();
+    const [ok, setOk] = useState(false)
+    const [auth] = useAuth();
     useEffect(() => {
         const authCheck = async () => {
             try {
