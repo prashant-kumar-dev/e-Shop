@@ -11,10 +11,13 @@ export const createProductController = async (req, res) => {
         const imageFile = req.file;
 
         // Basic validation
-        if (!name || !description || !price || !category || !quantity || !shipping) {
+        if (!name || !description || !price || !quantity || !shipping) {
             return res.status(400).send({ success: false, message: 'All fields are required' });
         }
-
+        // Ensure category is provided and valid
+        if (!category) {
+            return res.status(400).send({ success: false, message: 'Category is required' });
+        }
         let imageUrl = '';
         if (imageFile) {
             const uploadResult = await uploadOnCloudinary(imageFile.path); // Corrected function name
@@ -97,7 +100,7 @@ export const updateProductController = async (req, res) => {
         const productId = req.params.pid;
         const { name, description, price, category, quantity, shipping } = req.body;
         const imageFile = req.file;
-        console.log(req.body)
+        // console.log(req.body)
 
         // Check if productId is provided
         if (!productId) {
@@ -105,10 +108,13 @@ export const updateProductController = async (req, res) => {
         }
 
         // Basic validation
-        if (!name || !description || !price || !category || !quantity || !shipping) {
+        if (!name || !description || !price || !quantity || !shipping) {
             return res.status(400).send({ success: false, message: 'All fields are required' });
         }
-
+        // Ensure category is provided and valid
+        if (!category) {
+            return res.status(400).send({ success: false, message: 'Category is required' });
+        }
         let imageUrl = '';
         if (imageFile) {
             const uploadResult = await uploadOnCloudinary(imageFile.path); // Corrected function name

@@ -81,26 +81,52 @@ const ProductPage = () => {
         }
     };
 
-    const toggleModal = (type, data = { name: '', id: null }) => {
+    const toggleModal = (type, data = { product: null, id: null }) => {
         setModalType(type);
-        setFormData({ ...formData, ...data });
+        if (type === 'create') {
+            setFormData({
+                name: '',
+                description: '',
+                price: 0,
+                category: '',
+                quantity: 0,
+                shipping: false,
+                image: '',
+            });
+        } else if (type === 'update') {
+            const { product } = data;
+            if (product) {
+                setFormData({ ...formData, ...product });
+            }
+        }
     };
+
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // console.log('formData:', formData);
         try {
             const formDataObj = new FormData();
             for (const key in formData) {
                 formDataObj.append(key, formData[key]);
             }
-            const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/product/create-product`, formDataObj);
+            let endpoint = '';
+            if (modalType === 'create') {
+                endpoint = `${process.env.REACT_APP_API_URL}/api/v1/product/create-product`;
+            } else if (modalType === 'update') {
+                // Ensure formData._id exists before appending it to the endpoint
+                if (!formData._id) {
+                    throw new Error('Missing product ID for update');
+                }
+                endpoint = `${process.env.REACT_APP_API_URL}/api/v1/product/update-product/${formData._id}`;
+            }
+            const method = modalType === 'update' ? 'put' : 'post';
+            const { data } = await axios[method](endpoint, formDataObj);
 
             if (data.success) {
-                toast.success(`${formData.name} created`);
+                toast.success(`${formData.name} ${modalType === 'create' ? 'created' : 'updated'}`);
                 toggleModal(null);
                 fetchProducts(currentPage);
-                // Clear the form data after successful submission
                 setFormData({
                     name: '',
                     description: '',
@@ -108,15 +134,17 @@ const ProductPage = () => {
                     category: '',
                     quantity: 0,
                     shipping: false,
-                    image: '', // Optionally clear the image field as well
+                    image: '',
                 });
             } else {
-                toast.error(data.message || 'Failed to create product');
+                toast.error(data.message || `Failed to ${modalType === 'create' ? 'create' : 'update'} product`);
             }
         } catch (error) {
-            toast.error('Something went wrong creating category');
+            toast.error(`Something went wrong ${modalType === 'create' ? 'creating' : 'updating'} product`);
+            console.error('Error:', error); // Log the error for debugging
         }
     };
+
 
     const fields = [
         { name: 'name', label: 'Name', type: 'text' },
@@ -148,7 +176,7 @@ const ProductPage = () => {
                             formData={formData}
                             setFormData={setFormData}
                             handleSubmit={handleSubmit}
-                            submitName="Add Product"
+                            submitName={modalType === 'create' ? 'Add Product' : 'Update Product'}
                         />
                     </Modal>
                     <div className="bg-white shadow-md rounded-md p-4">
@@ -176,7 +204,7 @@ const ProductPage = () => {
                                         <td className="border border-gray-300 px-4 py-2">{product.shipping ? 'true' : 'false'}</td>
                                         <td className="border border-gray-300 px-4 py-2"><img src={product.image || ''} alt={product.name} style={{ width: '50px', height: '50px' }} /></td>
                                         <td className="border border-gray-300 px-4 py-2  flex gap-2">
-                                            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded">
+                                            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded" onClick={() => toggleModal('update', { product: product, id: product._id })}>
                                                 <FaEdit />
                                             </button>
                                             <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-4 px-4 rounded" onClick={() => handleDelete(product._id)}>
