@@ -66,16 +66,26 @@ const ProductForm = ({ fields, formData, setFormData, handleSubmit, submitName }
                                 >
                                     Upload Image
                                 </label>
+                                {/* Image Preview */}
                                 {formData.image && (
-                                    <span className="text-gray-500">{formData.image.name}</span>
+                                    <div>
+                                        <img
+                                            src={submitName === 'Update Product' ? formData.image : URL.createObjectURL(formData.image)}
+                                            alt="Preview"
+                                            style={{ maxWidth: '100px', maxHeight: '100px' }}
+                                        />
+                                    </div>
                                 )}
                             </div>
                         ) : field.type === 'dropdown' ? (
                             <Select
                                 className="md:w-3/4"
-                                value={formData[field.name]}
+                                value={formData.category && formData.category._id}
                                 showSearch
                                 onChange={(value) => handleCategoryChange(value)}
+                                filterOption={(input, option) =>
+                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
                             >
                                 {field.options.map((option) => (
                                     <Option key={option._id} value={option._id}>
