@@ -12,7 +12,7 @@ import AdminRoute from './components/Routes/AdminRoutes';
 import ForgotPassword from './pages/Auth/ForgotPassword';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import CategoryPage from './pages/Admin/CategoryPage';
-import ProductForm from './pages/Admin/ProductForm';
+import ProductPage from './pages/Admin/ProductPage';
 import UserForm from './pages/Admin/UserForm';
 import Orders from './pages/user/Orders';
 import Profile from './pages/user/Profile';
@@ -30,7 +30,7 @@ function App() {
 				<Route path='/dashboard' element={<AdminRoute />}>
 					<Route path='admin' element={<AdminDashboard />} />
 					<Route path='admin/create-category' element={<CategoryPage />} />
-					<Route path='admin/create-product' element={<ProductForm />} />
+					<Route path='admin/create-product' element={<ProductPage />} />
 					<Route path='admin/create-user' element={<UserForm />} />
 				</Route>
 				<Route path='/about' element={<About />} />

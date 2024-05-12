@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom';
 const Sidebar = () => {
     return (
         <div className="bg-gray-900 text-white w-64 min-h-screen">
-            <div className="p-4 text-2xl font-bold">Admin Dashboard</div>
+            <Link to="/dashboard/admin/">
+                <div className="p-4 text-2xl font-bold">Admin Dashboard</div>
+            </Link>
             <ul className="py-4">
                 <li>
                     <Link to="/dashboard/admin/create-category" className="block py-2 px-4 hover:bg-gray-800">Categories</Link>
