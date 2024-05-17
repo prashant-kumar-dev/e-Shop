@@ -1,9 +1,14 @@
 import categoryModel from "../models/categoryModel.js";
 import slugify from "slugify";
+import { uploadOnCloudinary } from "../helpers/cloudinary.js";
+import { promises as fsPromises } from 'fs';
+
+const { readFile, unlink } = fsPromises;
 
 export const createCategoryController = async (req, res) => {
     try {
         const { name } = req.body
+        const imageFile = req.file;
         if (!name) {
             return res.status(401).send({
                 message: "Name is required"
@@ -16,7 +21,16 @@ export const createCategoryController = async (req, res) => {
                 message: "Category already exist",
             })
         }
-        const category = await new categoryModel({ name, slug: slugify(name) }).save()
+        let imageUrl = '';
+        console.log(imageFile)
+        if (imageFile) {
+            const uploadResult = await uploadOnCloudinary(imageFile.path); // Corrected function name
+
+            imageUrl = uploadResult.url;
+            await unlink(imageFile.path); // Delete the temporary file after upload
+        }
+        const slug = slugify(name);
+        const category = await new categoryModel({ name, slug, image: imageUrl }).save()
         return res.status(201).send({
             success: true,
             message: "New Category created",
@@ -39,7 +53,19 @@ export const updateCategoryController = async (req, res) => {
     try {
         const { name } = req.body
         const { id } = req.params
-        const category = await categoryModel.findByIdAndUpdate(id, { name, slug: slugify(name) }, { new: true })
+        const imageFile = req.file;
+        let imageUrl = '';
+        if (imageFile) {
+            const uploadResult = await uploadOnCloudinary(imageFile.path); // Corrected function name
+            imageUrl = uploadResult.url;
+            await unlink(imageFile.path); // Delete the temporary file after upload
+        }
+        const slug = slugify(name);
+        const updateFields = { name, slug }
+        const category = await categoryModel.findByIdAndUpdate(id, updateFields, {
+            new: true, // Return the updated document
+            runValidators: true
+        })
         if (!category) {
             return res.status(404).send({
                 success: false,

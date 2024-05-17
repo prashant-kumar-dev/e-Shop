@@ -1,5 +1,6 @@
 import slugify from "slugify";
 import productModel from "../models/productModel.js";
+import categoryModel from "../models/categoryModel.js";
 import { uploadOnCloudinary } from "../helpers/cloudinary.js";
 import { promises as fsPromises } from 'fs';
 
@@ -174,3 +175,79 @@ export const deleteProductController = async (req, res) => {
         })
     }
 }
+
+// Controller function to get products by category ID
+export const getProductsByCategory = async (req, res) => {
+    try {
+        const slug = req.params.slug;
+        const category = await categoryModel.findOne({ slug }).lean();
+        if (!category) {
+            return res.status(404).json({ error: 'Category not found' });
+        }
+        const products = await productModel.find({ category: category._id }).populate('category');
+
+        res.status(201).send({
+            success: true,
+            message: 'Product fetched successfully',
+            products
+        });
+    } catch (err) {
+        console.error("Error fetching products by category:", err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+// Function to extract min and max prices from a price range string
+const getPriceFromRange = (range) => {
+    let min, max;
+    if (range.includes('+')) {
+        min = parseFloat(range.replace('₹', '').replace('+', ''));
+        max = Number.POSITIVE_INFINITY; // Set max value to positive infinity for ranges like ₹1000+
+    } else {
+        [min, max] = range.split(' - ').map(val => parseFloat(val.replace('₹', '')));
+    }
+    return { min, max };
+};
+
+// Controller function to handle product filters
+export const ProductsFiltersController = async (req, res) => {
+    try {
+        const { pricerange, category } = req.query;
+
+        // Split pricerange parameter into individual ranges
+        const priceranges = pricerange.split(',');
+        const query = {};
+
+        if (priceranges && priceranges.length > 0) {
+            // Construct MongoDB query for price range
+            const priceQueries = priceranges.map(range => {
+                const { min, max } = getPriceFromRange(range);
+                return { price: { $gte: min, $lte: max } };
+            });
+            // Combine price queries with $or operator
+            query.$or = priceQueries;
+        }
+        if (category) {
+            // Fetch category ID based on category slug
+            const categoryData = await categoryModel.findOne({ slug: category });
+            if (categoryData) {
+                // Add category filter to the query
+                query.category = categoryData._id; // Assuming categoryId is the reference field
+            }
+        }
+        // Fetch products based on the constructed query
+        const products = await productModel.find(query).populate('category');
+
+        res.status(200).json({
+            success: true,
+            message: 'Products fetched successfully',
+            products
+        });
+    } catch (error) {
+        // Handle errors
+        console.error("Error fetching products", error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
+
