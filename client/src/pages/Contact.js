@@ -4,10 +4,20 @@ import Layout from '../components/layouts/Layout';
 import { MdOutlineMail } from "react-icons/md";
 import { CiPhone } from "react-icons/ci";
 import { LiaAddressCardSolid } from "react-icons/lia";
+import Breadcrumb from '../components/Breadcrumb';
 
 const Contact = () => {
+    // Define breadcrumb paths
+    const breadcrumbPaths = [
+        { title: 'Home', link: '/' },
+        { title: 'Contact US' }, // Current category
+    ];
+
     return (
         <Layout title={'contact-us'}>
+            <div className="container mx-auto px-4 py-2">
+                <Breadcrumb paths={breadcrumbPaths} />
+            </div>
             <div className="min-h-screen bg-gray-100">
                 {/* Cover Image Section */}
                 <div className="relative h-64 md:h-80">

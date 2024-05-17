@@ -1,9 +1,11 @@
 import express from 'express'
 import authMiddleware from '../middlewares/authMiddleware.js'
 import {
+    ProductsFiltersController,
     createProductController,
     deleteProductController,
     getProductController,
+    getProductsByCategory,
     getSingleProductController,
     updateProductController
 } from '../controllers/productController.js'
@@ -25,6 +27,13 @@ router.put('/update-product/:pid', authMiddleware.requireSignin, authMiddleware.
 
 //delete product
 router.delete('/delete-product/:pid', authMiddleware.requireSignin, authMiddleware.isAdmin, deleteProductController)
+
+//Route to get products by category
+router.get('/category/:slug', getProductsByCategory)
+
+//product filter
+router.post('/filterProducts', ProductsFiltersController)
+
 
 export default router
 

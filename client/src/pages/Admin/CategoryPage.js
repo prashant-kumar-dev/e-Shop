@@ -10,7 +10,7 @@ import axios from 'axios';
 const CategoryPage = () => {
     const [categories, setCategories] = useState([]);
     const [modalType, setModalType] = useState(null);
-    const [formData, setFormData] = useState({ name: '', id: null });
+    const [formData, setFormData] = useState({ name: '', id: null, image: '' });
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 8; // Items per page
     const [totalPages, setTotalPages] = useState(1);
@@ -19,29 +19,35 @@ const CategoryPage = () => {
         fetchCategories(currentPage);
     }, [currentPage]);
 
-    const toggleModal = (type, data = { name: '', id: null }) => {
+    const toggleModal = (type, data = { name: '', image: '', id: null }) => {
         setModalType(type);
         setFormData({ ...formData, ...data });
     };
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
-        const { name, id } = formData;
-        const apiUrl = id
-            ? `${process.env.REACT_APP_API_URL}/api/v1/category/update-category/${id}`
+        // const { name, id } = formData;
+        // console.log(formData);
+        const formDataObj = new FormData();
+        for (const key in formData) {
+            formDataObj.append(key, formData[key]);
+        }
+
+        const apiUrl = formData._id
+            ? `${process.env.REACT_APP_API_URL}/api/v1/category/update-category/${formData._id}`
             : `${process.env.REACT_APP_API_URL}/api/v1/category/create-category`;
 
         try {
-            const { data } = await axios[id ? 'put' : 'post'](apiUrl, { name });
+            const { data } = await axios[formData._id ? 'put' : 'post'](apiUrl, formDataObj);
             if (data.success) {
-                toast.success(`${name} ${id ? 'updated' : 'created'}`);
+                toast.success(`${formData.name} ${formData._id ? 'updated' : 'created'}`);
                 toggleModal(null);
                 fetchCategories();
             } else {
                 toast.error(data.message);
             }
         } catch (error) {
-            toast.error(`Something went wrong ${id ? 'updating' : 'creating'} category`);
+            toast.error(`Something went wrong ${formData._id ? 'updating' : 'creating'} category`);
         }
     };
 
@@ -94,8 +100,8 @@ const CategoryPage = () => {
                     >
                         <CategoryForm
                             handleSubmit={handleFormSubmit}
-                            value={formData.name}
-                            setValue={(value) => setFormData({ ...formData, name: value })}
+                            value={formData}
+                            setValue={setFormData}
                             submitName={modalType === 'create' ? 'Create Category' : 'Update Category'}
                         />
                     </Modal>
@@ -105,6 +111,7 @@ const CategoryPage = () => {
                             <thead className="bg-gray-200">
                                 <tr>
                                     <th className="border border-gray-300 px-4 py-2">Category Name</th>
+                                    <th className="border border-gray-300 px-4 py-2">Image</th>
                                     <th className="border border-gray-300 px-4 py-2">Actions</th>
                                 </tr>
                             </thead>
@@ -112,10 +119,11 @@ const CategoryPage = () => {
                                 {categories.map((category) => (
                                     <tr key={category._id} className="border border-gray-300">
                                         <td className="border border-gray-300 px-4 py-2">{category.name}</td>
-                                        <td className="border border-gray-300 px-4 py-2  flex gap-2">
+                                        <td className="border border-gray-300 px-4 py-2"><img src={category.image || ''} alt={category.name} style={{ width: '50px', height: '50px' }} /></td>
+                                        <td className="border border-gray-300 px-4 py-4  flex gap-2">
                                             <button
                                                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                                onClick={() => toggleModal('update', { name: category.name, id: category._id })}
+                                                onClick={() => toggleModal('update', { name: category.name, image: category.image, id: category._id })}
                                             >
                                                 <FaEdit />
                                             </button>

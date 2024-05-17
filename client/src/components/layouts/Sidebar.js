@@ -26,7 +26,7 @@ const Sidebar = ({ toggleSidebar, toggle, handleLogout }) => {
 			<div className="p-2.5 mt-1 flex items-center justify-between">
 				<div className="flex items-center">
 					<i className="bi bi-app-indicator px-2 py-1 rounded-md bg-blue-600" />
-					<h1 className="font-bold text-gray-200 text-[15px] ml-3">TailwindCSS</h1>
+					<h1 className="font-bold text-gray-200 text-[15px] ml-3">{auth.user && auth.user.name}</h1>
 				</div>
 				<FaWindowClose className="cursor-pointer text-gray-200 text-lg" onClick={toggleSidebar} />
 			</div>

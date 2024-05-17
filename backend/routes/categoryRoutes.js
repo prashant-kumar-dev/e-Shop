@@ -1,5 +1,6 @@
 import express from 'express'
 import authMiddleware from '../middlewares/authMiddleware.js'
+import { upload } from '../middlewares/multerMiddleware.js'
 import {
     createCategoryController,
     deleteCategoryController,
@@ -11,10 +12,10 @@ import {
 const router = express.Router()
 
 //routes // create category
-router.post('/create-category', authMiddleware.requireSignin, authMiddleware.isAdmin, createCategoryController)
+router.post('/create-category', authMiddleware.requireSignin, authMiddleware.isAdmin, upload.single('image'), createCategoryController)
 
 //update category
-router.put('/update-category/:id', authMiddleware.requireSignin, authMiddleware.isAdmin, updateCategoryController)
+router.put('/update-category/:id', authMiddleware.requireSignin, authMiddleware.isAdmin, upload.single('image'), updateCategoryController)
 
 //getALL category
 router.get('/get-category', getcategoryController)
