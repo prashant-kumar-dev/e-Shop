@@ -1,19 +1,29 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 
-const ProductList = ({ category, filters }) => {
+const ProductList = ({ category, filters, page, setTotalPages }) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const fetchProducts = async () => {
+    const fetchProducts = async (page = 1, append = false) => {
+        setLoading(true);
         try {
             let url = `${process.env.REACT_APP_API_URL}/api/v1/product/get-products`;
             if (category) {
-                url = `${process.env.REACT_APP_API_URL}/api/v1/product/category/${category.slug}`;
+                url = `${process.env.REACT_APP_API_URL}/api/v1/product/category/${category.slug}?page=${page}&limit=2`;
             }
             const response = await axios.get(url);
-            setProducts(response.data.products);
+            const data = response.data;
+
+            if (append) {
+                setProducts((prevProducts) => [...prevProducts, ...data.products]);
+            } else {
+                setProducts(data.products);
+            }
+            if (data.totalPages) {
+                setTotalPages(data.totalPages);
+            }
         } catch (error) {
             setError('Error fetching products');
             console.error('Error fetching products:', error);
@@ -21,10 +31,11 @@ const ProductList = ({ category, filters }) => {
             setLoading(false);
         }
     };
+
     useEffect(() => {
-        fetchProducts();
+        fetchProducts(page, page > 1);
         // eslint-disable-next-line
-    }, [category]);
+    }, [category, page]);
 
     useEffect(() => {
         const filterProducts = async () => {
@@ -68,13 +79,41 @@ const ProductList = ({ category, filters }) => {
         console.log(`Product added to cart: ${productId}`);
     }, []);
 
-    if (loading) {
-        return <div>Loading...</div>; // Add a loading indicator
-    }
-
     if (error) {
         return <div>Error: {error}</div>; // Display error message
     }
+    if (loading) {
+        return (
+            <div className="spinner-container">
+                <div className="spinner"></div>
+                <style>
+                    {`
+                        .spinner-container {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100%;
+                            width: 100%;
+                        }
+                        .spinner {
+                            border: 4px solid rgba(0, 0, 0, 0.1);
+                            border-left-color: #4a90e2;
+                            border-radius: 50%;
+                            width: 40px;
+                            height: 40px;
+                            animation: spin 1s linear infinite;
+                        }
+                        @keyframes spin {
+                            to {
+                                transform: rotate(360deg);
+                            }
+                        }
+                    `}
+                </style>
+            </div>
+        );
+    }
+
 
     return (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">

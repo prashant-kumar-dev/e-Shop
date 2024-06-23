@@ -48,7 +48,7 @@ export const createProductController = async (req, res) => {
 };
 //get products
 export const getProductController = async (req, res) => {
-    const { limit = 10, offset = 0 } = req.query; // Default limit to 10, offset to 0
+    const { limit = 4, offset = 0 } = req.query; // Default limit to 10, offset to 0
     try {
         const totalCount = await productModel.countDocuments();
         const products = await productModel
@@ -180,22 +180,35 @@ export const deleteProductController = async (req, res) => {
 export const getProductsByCategory = async (req, res) => {
     try {
         const slug = req.params.slug;
+        const { page = 1, limit = 5 } = req.query; // Default to page 1 and limit 5 if not provided
+
         const category = await categoryModel.findOne({ slug }).lean();
         if (!category) {
             return res.status(404).json({ error: 'Category not found' });
         }
-        const products = await productModel.find({ category: category._id }).populate('category');
 
-        res.status(201).send({
+        const totalProducts = await productModel.countDocuments({ category: category._id });
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        const products = await productModel.find({ category: category._id })
+            .populate('category')
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit))
+            .exec();
+
+        res.status(200).send({
             success: true,
-            message: 'Product fetched successfully',
-            products
+            message: 'Products fetched successfully',
+            products,
+            totalPages,
+            currentPage: page
         });
     } catch (err) {
         console.error("Error fetching products by category:", err);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 // Function to extract min and max prices from a price range string
 const getPriceFromRange = (range) => {
     let min, max;
@@ -209,7 +222,7 @@ const getPriceFromRange = (range) => {
 };
 
 // Controller function to handle product filters
-export const ProductsFiltersController = async (req, res) => {
+export const productsFiltersController = async (req, res) => {
     try {
         const { pricerange, category } = req.query;
 

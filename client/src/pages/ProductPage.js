@@ -14,6 +14,10 @@ const ProductPage = () => {
     const { slug } = useParams();
     const [category, setCategory] = useState(null);
 
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
+
     useEffect(() => {
         const fetchCategory = async () => {
             try {
@@ -47,7 +51,11 @@ const ProductPage = () => {
         { title: category.category.name }, // Current category
     ];
 
-
+    const loadMore = () => {
+        if (page < totalPages) {
+            setPage(page + 1);
+        }
+    };
     return (
         <Layout>
             {/* Breadcrumb navigation */}
@@ -56,7 +64,7 @@ const ProductPage = () => {
             </div>
             <div className="flex flex-col lg:flex-row">
                 <div className={`w-full lg:w-1/4 p-4 ${sidebarOpen ? 'block' : 'hidden'}`}>
-                    <FilterSidebar filters={filters} onChange={handleFilterChange} />
+                    <FilterSidebar filters={filters} onChange={handleFilterChange} setPage={setPage} />
                 </div>
                 <div className="w-full lg:w-3/4 p-4">
                     {/* Button to toggle sidebar visibility on smaller devices */}
@@ -66,9 +74,26 @@ const ProductPage = () => {
                     >
                         {sidebarOpen ? 'Hide Filters' : 'Show Filters'}
                     </button>
-                    <ProductList category={category?.category} filters={filters} />
+                    <ProductList category={category?.category}
+                        filters={filters}
+                        page={page}
+                        setTotalPages={setTotalPages}
+                    />
+
+                    {page < totalPages && (
+                        <div className="flex justify-center mt-6">
+                            <button
+                                onClick={loadMore}
+                                className="px-4 py-2 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            >
+                                Load More
+                            </button>
+                        </div>
+                    )}
                 </div>
+
             </div>
+
         </Layout>
     );
 };

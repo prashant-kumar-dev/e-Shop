@@ -20,7 +20,7 @@ const ProductPage = () => {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 3;
+    const itemsPerPage = 6;
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
     const [modalType, setModalType] = useState(null);
