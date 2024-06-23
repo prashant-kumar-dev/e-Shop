@@ -42,12 +42,13 @@ const FilterCategory = ({ title, options, onChange, filters }) => {
     );
 };
 
-const FilterSidebar = ({ filters, onChange }) => {
+const FilterSidebar = ({ filters, onChange, setPage }) => {
     const [collapsed, setCollapsed] = useState(false);
 
     const clearFilters = () => {
         Object.keys(filters).forEach(category => {
             onChange(category, []);
+            setPage(1)
         });
     };
 

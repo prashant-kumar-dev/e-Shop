@@ -1,13 +1,13 @@
 import express from 'express'
 import authMiddleware from '../middlewares/authMiddleware.js'
 import {
-    ProductsFiltersController,
+    productsFiltersController,
     createProductController,
     deleteProductController,
     getProductController,
     getProductsByCategory,
     getSingleProductController,
-    updateProductController
+    updateProductController,
 } from '../controllers/productController.js'
 import { upload } from '../middlewares/multerMiddleware.js'
 
@@ -32,7 +32,7 @@ router.delete('/delete-product/:pid', authMiddleware.requireSignin, authMiddlewa
 router.get('/category/:slug', getProductsByCategory)
 
 //product filter
-router.post('/filterProducts', ProductsFiltersController)
+router.post('/filterProducts', productsFiltersController)
 
 
 export default router

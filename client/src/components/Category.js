@@ -10,7 +10,6 @@ const Category = () => {
     const fetchCategories = async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/category/get-category`);
-            // console.log(response.datay);
             const { data } = response;
             if (data.success) {
                 setCategories(data.categories);
