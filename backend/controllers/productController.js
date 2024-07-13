@@ -3,6 +3,7 @@ import productModel from "../models/productModel.js";
 import categoryModel from "../models/categoryModel.js";
 import { uploadOnCloudinary } from "../helpers/cloudinary.js";
 import { promises as fsPromises } from 'fs';
+import exp from "constants";
 
 const { readFile, unlink } = fsPromises;
 
@@ -261,6 +262,33 @@ export const productsFiltersController = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+export const searchProductsController = async (req, res) => {
+    try {
+        const { keyword } = req.params
+        const products = await productModel.find({
+            $or: [
+                { name: { $regex: keyword, $options: "i" } },   // Case insensitive search
+                { description: { $regex: keyword, $options: "i" }, }
+            ]
+        })
+        res.status(200).json({
+            success: true,
+            message: 'products search successfully',
+            products
+        })
+
+    } catch (error) {
+        console.error("Error fetching products searching :", err);
+        res.status(404).json(
+            {
+                success: false,
+                message: 'Error in search products',
+                error
+
+            });
+    }
+}
+
 
 
 

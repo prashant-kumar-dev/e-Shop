@@ -8,6 +8,7 @@ import {
     getProductsByCategory,
     getSingleProductController,
     updateProductController,
+    searchProductsController,
 } from '../controllers/productController.js'
 import { upload } from '../middlewares/multerMiddleware.js'
 
@@ -33,6 +34,9 @@ router.get('/category/:slug', getProductsByCategory)
 
 //product filter
 router.post('/filterProducts', productsFiltersController)
+
+//serach products
+router.get('/search/:keyword', searchProductsController)
 
 
 export default router
