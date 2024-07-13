@@ -12,12 +12,13 @@ import { BsChevronDown } from 'react-icons/bs'; // Dropdown icon
 import toast from 'react-hot-toast';
 
 import Sidebar from './Sidebar';
+import { useSearch } from '../../context/search';
 
 const Header = () => {
     const [auth, setAuth] = useAuth();
     const [toggle, setToggle] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
     const [categories, setCategories] = useState([]);
+    const [values, setValues] = useSearch();
     const navigate = useNavigate()
     const [showDropdown, setShowDropdown] = useState(false);
 
@@ -58,10 +59,18 @@ const Header = () => {
         }, 1000);
     }, [auth, navigate, setAuth]);
 
-    const handleSearch = useCallback(() => {
+    const handleSearch = async (e) => {
+        e.preventDefault()
+        try {
+            const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/product/search/${values.keyword}`)
+            setValues({ ...values, results: data })
+            navigate('/search');
+        } catch (error) {
+            console.log(error);
+        }
         // Add your search logic here, such as navigating to search results page
-        navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
-    }, [navigate, searchQuery]);
+        // navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+    };
 
 
     const Dropdown = ({ isOpen, toggleDropdown }) => {
@@ -123,11 +132,6 @@ const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
     const links = [
 
-        {
-            icons: <TbCategoryPlus />,
-            name: 'Category',
-            path: '',
-        },
         {
             icons: <Dropdown isOpen={isOpen} toggleDropdown={() => setIsOpen(!isOpen)} />, // Using Dropdown component here
             name: '',
@@ -195,8 +199,8 @@ const Header = () => {
                                     type="text"
                                     placeholder="Search"
                                     className="py-1 px-2 border rounded-md w-full focus:outline-none focus:border-blue-500"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    value={values.keyword}
+                                    onChange={(e) => setValues({ ...values, keyword: e.target.value })}
                                 />
                                 <IoMdSearch
                                     className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
