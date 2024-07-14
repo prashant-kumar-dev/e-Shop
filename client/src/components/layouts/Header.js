@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/auth';
 import { IoMdSearch } from 'react-icons/io';
 import { MdAssignmentInd } from 'react-icons/md';
-import { TbCategoryPlus } from 'react-icons/tb';
 import { BsCart4 } from 'react-icons/bs';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { BsChevronDown } from 'react-icons/bs'; // Dropdown icon
@@ -183,12 +182,13 @@ const Header = () => {
                                 {showDropdown && (
                                     <div className="absolute top-full left-0 z-10 mt-1 w-36 bg-white border border-gray-400 rounded-md shadow-lg overflow-y-auto max-h-60">
                                         {categories.map((category, index) => (
-                                            <div
+                                            <Link
                                                 key={index}
-                                                className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                                                to={`/${category.slug}`}
+                                                className="px-4 py-2 cursor-pointer hover:bg-gray-100 block"
                                             >
                                                 {category.name}
-                                            </div>
+                                            </Link>
                                         ))}
                                     </div>
                                 )}

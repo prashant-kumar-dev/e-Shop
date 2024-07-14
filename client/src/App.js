@@ -11,8 +11,9 @@ import PrivateRoute from './components/Routes/Private';
 import AdminRoute from './components/Routes/AdminRoutes';
 import ForgotPassword from './pages/Auth/ForgotPassword';
 import AdminDashboard from './pages/Admin/AdminDashboard';
-import CategoryPage from './pages/Admin/CategoryPage';
+import AdminCategoryPage from './pages/Admin/CategoryPage';
 import AdminProductPage from './pages/Admin/ProductPage';
+import CategoryPage from './pages/CategoryPage';
 import ProductPage from './pages/ProductPage';
 import UserForm from './pages/Admin/UserForm';
 import Orders from './pages/user/Orders';
@@ -32,7 +33,7 @@ function App() {
 				</Route>
 				<Route path='/dashboard' element={<AdminRoute />}>
 					<Route path='admin' element={<AdminDashboard />} />
-					<Route path='admin/create-category' element={<CategoryPage />} />
+					<Route path='admin/create-category' element={<AdminCategoryPage />} />
 					<Route path='admin/create-product' element={< AdminProductPage />} />
 					<Route path='admin/create-user' element={<UserForm />} />
 				</Route>
@@ -42,7 +43,8 @@ function App() {
 				<Route path='/register' element={<Register />} />
 				<Route path='/forgot-password' element={<ForgotPassword />} />
 				<Route path='/login' element={<Login />} />
-				<Route path="/:slug" element={<ProductPage />} />
+				<Route path="/:slug" element={<CategoryPage />} />
+				<Route path="/products/:slug" element={<ProductPage />} />
 				<Route path='*' element={<Pagenotfound />} />
 			</Routes>
 		</>

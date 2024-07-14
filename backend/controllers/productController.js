@@ -262,6 +262,7 @@ export const productsFiltersController = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 export const searchProductsController = async (req, res) => {
     try {
         const { keyword } = req.params
