@@ -32,7 +32,7 @@ const CategoryPage = () => {
     }, [slug]); // Trigger effect when slug changes
 
     if (!category) {
-        return <div>Loading...</div>; // Add loading indicator
+        return
     }
 
     const handleFilterChange = (name, newFilters) => {

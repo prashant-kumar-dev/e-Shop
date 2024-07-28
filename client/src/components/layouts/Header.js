@@ -12,10 +12,12 @@ import toast from 'react-hot-toast';
 
 import Sidebar from './Sidebar';
 import { useSearch } from '../../context/search';
+import { useCart } from '../../context/cart';
 
 const Header = () => {
     const [auth, setAuth] = useAuth();
     const [toggle, setToggle] = useState(false);
+    const [cart, setCart] = useCart()
     const [categories, setCategories] = useState([]);
     const [values, setValues] = useSearch();
     const navigate = useNavigate()
@@ -140,9 +142,11 @@ const Header = () => {
             icons: (
                 <div className="relative">
                     <BsCart4 className="h-7 w-7" />
-                    <sup className="bg-blue-500 text-white rounded-full px-2 py-1 text-xs absolute -top-2 -right-2">
-                        {3}
-                    </sup>
+                    {cart?.totalItems > 0 && (
+                        <sup className="bg-blue-500 text-white rounded-full px-2 py-1 text-xs absolute -top-2 -right-2">
+                            {cart.totalItems}
+                        </sup>
+                    )}
                 </div>
             ),
             name: '',
