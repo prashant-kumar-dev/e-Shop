@@ -1,12 +1,15 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import axios from 'axios';
 import CommonSpinner from './CommonSpinner';
+import { useCart } from '../context/cart';
+import toast from 'react-hot-toast';
 
 const ProductList = ({ category, filters, page, setTotalPages }) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [cart, setCart] = useCart();
 
     const fetchProducts = async (page = 1, append = false) => {
         setLoading(true);
@@ -75,15 +78,40 @@ const ProductList = ({ category, filters, page, setTotalPages }) => {
         // eslint-disable-next-line
     }, [filters])
 
-
-    const handleAddToCart = useCallback((productId) => {
-        // Implement add to cart logic (e.g., update cart state or send API request)
-        console.log(`Product added to cart: ${productId}`);
-    }, []);
-
     if (error) {
         return <div>Error: {error}</div>; // Display error message
     }
+
+    const handleAddToCart = (product) => {
+        let _cart = { ...cart };
+
+        if (!_cart.items) {
+            _cart.items = {};
+        }
+        if (_cart.items[product._id]) {
+            _cart.items[product._id] += 1;
+        } else {
+            _cart.items[product._id] = 1;
+        }
+
+        if (!_cart.totalItems) {
+            _cart.totalItems = 0;
+        }
+        _cart.totalItems += 1;
+
+        // Include product details in the cart
+        if (!_cart.productDetails) {
+            _cart.productDetails = {};
+        }
+        _cart.productDetails[product._id] = product;
+
+        setCart(_cart);
+
+        // Save cart to localStorage whenever it changes
+        localStorage.setItem('cart', JSON.stringify(_cart));
+
+        toast.success("Item added to cart");
+    };
 
     return (
         <div>
@@ -92,8 +120,8 @@ const ProductList = ({ category, filters, page, setTotalPages }) => {
                     <CommonSpinner />
                 ) : (
                     products.map((product) => (
-                        <Link to={`/products/${product.slug}`}>
-                            <div key={product._id} className="relative overflow-hidden bg-white rounded-lg shadow-lg transition-transform transform hover:scale-105">
+                        <div key={product._id} className="relative overflow-hidden bg-white rounded-lg shadow-lg transition-transform transform hover:scale-105">
+                            <Link to={`/products/${product.slug}`}>
                                 <div className="aspect-w-3 aspect-h-4 bg-gray-200 hover:bg-gray-300 transition duration-300">
                                     <img
                                         src={product.image}
@@ -101,21 +129,21 @@ const ProductList = ({ category, filters, page, setTotalPages }) => {
                                         className="object-cover object-center w-full h-full"
                                     />
                                 </div>
-                                <div className="p-4">
-                                    <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
-                                    <p className="text-sm text-gray-700 mb-2">{product.color}</p>
-                                    <div className="flex items-center justify-between">
-                                        <p className="text-lg font-bold text-gray-900">₹ {product.price}</p>
-                                        <button
-                                            onClick={() => handleAddToCart(product.id)}
-                                            className="flex-shrink-0 ml-3 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                        >
-                                            Add to Cart
-                                        </button>
-                                    </div>
+                            </Link>
+                            <div className="p-4">
+                                <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
+                                <p className="text-sm text-gray-700 mb-2">{product.color}</p>
+                                <div className="flex items-center justify-between">
+                                    <p className="text-lg font-bold text-gray-900">₹ {product.price}</p>
+                                    <button
+                                        onClick={() => handleAddToCart(product)}
+                                        className="flex-shrink-0 ml-3 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                    >
+                                        Add to Cart
+                                    </button>
                                 </div>
                             </div>
-                        </Link>
+                        </div>
                     ))
                 )}
             </div>

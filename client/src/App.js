@@ -19,6 +19,7 @@ import UserForm from './pages/Admin/UserForm';
 import Orders from './pages/user/Orders';
 import Profile from './pages/user/Profile';
 import Search from './pages/Search';
+import CartPage from './pages/CartPage';
 
 function App() {
 	return (
@@ -45,6 +46,7 @@ function App() {
 				<Route path='/login' element={<Login />} />
 				<Route path="/:slug" element={<CategoryPage />} />
 				<Route path="/products/:slug" element={<ProductPage />} />
+				<Route path='/cart' element={<CartPage />} />
 				<Route path='*' element={<Pagenotfound />} />
 			</Routes>
 		</>
