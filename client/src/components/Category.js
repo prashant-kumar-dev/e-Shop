@@ -56,7 +56,7 @@ const Category = () => {
                                 >
                                     <Link to={`/${category.slug}`}>
                                         <div className=' text-center'>
-                                            <img src={category.image} className=' rounded-full' alt="" />
+                                            <img src={category.image} className=' rounded-full' alt="" loading="lazy" />
                                             <span>{category.name}</span>
                                         </div>
                                     </Link>

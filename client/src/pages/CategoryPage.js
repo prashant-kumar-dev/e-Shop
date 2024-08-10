@@ -13,26 +13,44 @@ const CategoryPage = () => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const { slug } = useParams();
     const [category, setCategory] = useState(null);
-
+    const [loading, setLoading] = useState(true); // New loading state
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
-
     useEffect(() => {
         const fetchCategory = async () => {
+            setLoading(true); // Start loading
             try {
                 const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/category/single-category/${slug}`);
                 setCategory(response.data);
             } catch (error) {
                 console.error('Error fetching category:', error);
+            } finally {
+                setLoading(false); // End loading
             }
         };
 
         fetchCategory();
-    }, [slug]); // Trigger effect when slug changes
+    }, [slug]);
+
+    if (loading) {
+        return (
+            <Layout>
+                <div className="flex justify-center items-center min-h-screen">
+                    <div>Loading...</div> {/* Replace with your preferred loader */}
+                </div>
+            </Layout>
+        );
+    }
 
     if (!category) {
-        return
+        return (
+            <Layout>
+                <div className="flex justify-center items-center min-h-screen">
+                    <div>Category not found</div>
+                </div>
+            </Layout>
+        );
     }
 
     const handleFilterChange = (name, newFilters) => {
@@ -45,10 +63,10 @@ const CategoryPage = () => {
     const toggleSidebar = () => {
         setSidebarOpen(!sidebarOpen);
     };
-    // Define breadcrumb paths
+
     const breadcrumbPaths = [
         { title: 'Home', link: '/' },
-        { title: category.category.name }, // Current category
+        { title: category.category.name },
     ];
 
     const loadMore = () => {
@@ -56,9 +74,9 @@ const CategoryPage = () => {
             setPage(page + 1);
         }
     };
+
     return (
         <Layout>
-            {/* Breadcrumb navigation */}
             <div className="container mx-auto px-4 py-2">
                 <Breadcrumb paths={breadcrumbPaths} />
             </div>
@@ -67,19 +85,18 @@ const CategoryPage = () => {
                     <FilterSidebar filters={filters} onChange={handleFilterChange} setPage={setPage} />
                 </div>
                 <div className="w-full lg:w-3/4 p-4">
-                    {/* Button to toggle sidebar visibility on smaller devices */}
                     <button
                         className="block lg:hidden mb-4 bg-gray-200 hover:bg-gray-300 py-2 px-4 rounded-md"
                         onClick={toggleSidebar}
                     >
                         {sidebarOpen ? 'Hide Filters' : 'Show Filters'}
                     </button>
-                    <ProductList category={category?.category}
+                    <ProductList
+                        category={category?.category}
                         filters={filters}
                         page={page}
                         setTotalPages={setTotalPages}
                     />
-
                     {page < totalPages && (
                         <div className="flex justify-center mt-6">
                             <button
@@ -91,9 +108,7 @@ const CategoryPage = () => {
                         </div>
                     )}
                 </div>
-
             </div>
-
         </Layout>
     );
 };
