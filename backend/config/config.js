@@ -7,7 +7,8 @@ const _config = {
     jwtSecret: process.env.JWT_SECRET,
     cloudinary_cloude_name: process.env.CLOUDINARY_CLOUD_NAME,
     cloudinary_api_key: process.env.CLOUDINARY_API_KEY,
-    cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET
+    cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET,
+    sessionSecret: process.env.SESSION_SECRET
 
 
 

@@ -3,13 +3,12 @@ import { Link } from "react-router-dom";
 import axios from 'axios';
 import CommonSpinner from './CommonSpinner';
 import { useCart } from '../context/cart';
-import toast from 'react-hot-toast';
 
 const ProductList = ({ category, filters, page, setTotalPages }) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [cart, setCart] = useCart();
+    const { addItemToCart } = useCart();
 
     const fetchProducts = async (page = 1, append = false) => {
         setLoading(true);
@@ -82,37 +81,6 @@ const ProductList = ({ category, filters, page, setTotalPages }) => {
         return <div>Error: {error}</div>; // Display error message
     }
 
-    const handleAddToCart = (product) => {
-        let _cart = { ...cart };
-
-        if (!_cart.items) {
-            _cart.items = {};
-        }
-        if (_cart.items[product._id]) {
-            _cart.items[product._id] += 1;
-        } else {
-            _cart.items[product._id] = 1;
-        }
-
-        if (!_cart.totalItems) {
-            _cart.totalItems = 0;
-        }
-        _cart.totalItems += 1;
-
-        // Include product details in the cart
-        if (!_cart.productDetails) {
-            _cart.productDetails = {};
-        }
-        _cart.productDetails[product._id] = product;
-
-        setCart(_cart);
-
-        // Save cart to localStorage whenever it changes
-        localStorage.setItem('cart', JSON.stringify(_cart));
-
-        toast.success("Item added to cart");
-    };
-
     return (
         <div>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
@@ -136,7 +104,7 @@ const ProductList = ({ category, filters, page, setTotalPages }) => {
                                 <div className="flex items-center justify-between">
                                     <p className="text-lg font-bold text-gray-900">₹ {product.price}</p>
                                     <button
-                                        onClick={() => handleAddToCart(product)}
+                                        onClick={() => addItemToCart(product)}
                                         className="flex-shrink-0 ml-3 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                     >
                                         Add to Cart
