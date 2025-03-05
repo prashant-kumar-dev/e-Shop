@@ -33,12 +33,17 @@ npm install
 cd ../server
 npm install
 
-3.Set up environment variables
-MONGO_URI=your_mongodb_uri
-JWT_SECRET=your_jwt_secret
-CLOUDINARY_CLOUD_NAME=your_cloudinary_name
-CLOUDINARY_API_KEY=your_cloudinary_api_key
-CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+3.## 🔑 Environment Variables  
+
+Create a `.env` file in the `server` folder and add the following configurations:  
+
+```plaintext
+MONGO_URI=<your_mongodb_uri>
+JWT_SECRET=<your_jwt_secret>
+CLOUDINARY_CLOUD_NAME=<your_cloudinary_name>
+CLOUDINARY_API_KEY=<your_cloudinary_api_key>
+CLOUDINARY_API_SECRET=<your_cloudinary_api_secret>
+
 
 4.Run the application
 
