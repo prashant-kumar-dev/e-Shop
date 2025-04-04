@@ -11,7 +11,7 @@ Greenify is a feature-rich **Plant E-Commerce Platform** built using **React.js,
 - 🔹 **Cloudinary Integration** – Image uploads for products  
 
 ## 🛠️ Tech Stack  
-- **Frontend:** React.js, Redux, Bootstrap  
+- **Frontend:** React.js, tailwind
 - **Backend:** Node.js, Express.js  
 - **Database:** MongoDB  
 - **Cloud Storage:** Cloudinary  
