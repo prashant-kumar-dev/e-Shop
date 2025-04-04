@@ -5,7 +5,7 @@ Greenify is a feature-rich **Plant E-Commerce Platform** built using **React.js,
 ## 🚀 Features  
 - 🔹 **Secure Authentication** – User login and registration with JWT  
 - 🔹 **Categorized Plant Listings** – Easy navigation with filtering options  
-- 🔹 **Redux State Management** – Efficient and optimized application performance  
+- 🔹 **State Management** – Efficient and optimized application performance  
 - 🔹 **Dynamic Price Calculation** – Updates cart total in real-time  
 - 🔹 **Product Management** – Admin can add, update, and delete plant products  
 - 🔹 **Cloudinary Integration** – Image uploads for products  
